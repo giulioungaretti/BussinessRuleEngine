@@ -4,13 +4,32 @@ open Domain
 open Xunit
 
 
+
+let customerInfo =
+    { Email = "foo@bar.com"
+      Adress = "street foo bar" }
+
+let memberInfo = { Email = customerInfo.Email }
+
 [<Fact>]
 let ``Test physical product`` () =
     // • If the payment is for a physical product
     //  generate a packing slip for shipping.
     // • If the payment is for a physical product or a book,
     // • generate a commission payment to the agent.
-    ()
+    let order = Other "A red dress" |> Phyiscal
+
+    let result = Engine.ProcessOrder(order)
+
+    let packingSlip =
+        { Adress = customerInfo.Adress
+          Extra = None }
+
+    let expected =
+        [ ShipProdcut(packingSlip)
+          PaymentCommission ]
+
+    Assert.Equal<Result list>(expected, result)
 
 
 [<Fact>]
@@ -22,6 +41,7 @@ let ``Test Book `` () =
     // • If the payment is for a physical product or a book,
     // generate a commission payment to the agent.
     ()
+
 
 
 [<Fact>]
